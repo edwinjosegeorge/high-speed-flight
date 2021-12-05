@@ -19,50 +19,21 @@
 
 \mode<presentation> {
 
-% The Beamer class comes with a number of default slide themes
-% which change the colors and layouts of slides. Below this is a list
-% of all the themes, uncomment each in turn to see what they look like.
-
 %\usetheme{default}
-%\usetheme{AnnArbor}
 %\usetheme{Antibes}
-%\usetheme{Bergen}
-%\usetheme{Berkeley}
-%\usetheme{Berlin}
 %\usetheme{Boadilla}
-%\usetheme{CambridgeUS}
-%\usetheme{Copenhagen}
-%\usetheme{Darmstadt}
-%\usetheme{Dresden}
-%\usetheme{Frankfurt}
-%\usetheme{Goettingen}
-%\usetheme{Hannover}
-%\usetheme{Ilmenau}
 %\usetheme{JuanLesPins}
-%\usetheme{Luebeck}
 \usetheme{Madrid}
-%\usetheme{Malmoe}
-%\usetheme{Marburg}
-%\usetheme{Montpellier}
-%\usetheme{PaloAlto}
-%\usetheme{Pittsburgh}
 %\usetheme{Rochester}
-%\usetheme{Singapore}
-%\usetheme{Szeged}
-%\usetheme{Warsaw}
+
+
 
 % As well as themes, the Beamer class has a number of color themes
 % for any slide theme. Uncomment each of these in turn to see how it
 % changes the colors of your current slide theme.
 
-%\usecolortheme{albatross}
 %\usecolortheme{beaver}
-%\usecolortheme{beetle}
-%\usecolortheme{crane}
 %\usecolortheme{dolphin}
-%\usecolortheme{dove}
-%\usecolortheme{fly}
-%\usecolortheme{lily}
 %\usecolortheme{orchid}
 %\usecolortheme{rose}
 %\usecolortheme{seagull}
@@ -74,43 +45,161 @@
 %\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
 
 %\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+
+\setbeamertemplate{caption}[numbered]
 }
 
-\usepackage{graphicx} % Allows including images
-\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[%
+	autocite    = superscript,
+	backend     = bibtex,
+	sortcites   = true,
+	style       = numeric,
+]{biblatex}
+\addbibresource{reference.bib}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[Short title]{Full Title of the Talk} % The short title appears at the bottom of every slide, the full title is only on the title page
-
-\author{John Smith} % Your name
-\institute[UCLA] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
-{
-University of California \\ % Your institution for the title page
-\medskip
-\textit{john@smith.com} % Your email address
+\title[High speed Flight]{Learning High-Speed Flight in the Wild \autocite{high-speed-flight}}
+\author{Edwin Jose George}
+\institute[GCEK]{
+	Guided by Dr. Rafeeque P C \\
+	\medskip
+	Department of Computer Science and Engineering \\
+	Government College of Engineering Kannur
 }
-\date{\today} % Date, can be changed to a custom date
+\date{\today}
 
 \begin{document}
 
 \begin{frame}
-\titlepage % Print the title page as the first slide
+	\titlepage
 \end{frame}
 
-\begin{frame}
-\frametitle{Overview} % Table of contents slide, comment this block out to remove it
-\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\begin{frame}{Overview}
+	\tableofcontents
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
+\section{Introduction}
+\begin{frame}{Quad-drones}
+	\begin{itemize}
+		\item They are the most agile and dynamic machines, traversing extremely complex environments at high speeds. 
+		\item This ability has led to their application in fields such as search and rescue, logistics, security, infrastructure, entertainment, and agriculture.
+		\item To date, only expert human pilots have been able to fully exploit their capabilities. 
+		\item Training of expert piolts - time consuming and costly
+		\item The limiting factor for autonomous agile flight in arbitrary unknown environments is the coupling of fast and robust perception with effective planning. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{State of the art}
+	\begin{itemize}
+		\item Autonomous operation with onboard sensing and computation has been limited to low speeds. 
+		\item Separate the navigation problem into subtasks: sensing, mapping, and planning. \\
+		This approach has proven successful at low speeds
+		\item The sub tasks are executed sequentially, leading to increased processing latency and compounding of errors through the pipeline.
+		\item These issues can be mitigated to some degree by careful hand-tuning and engineering.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Proposed Solution}
+	\begin{itemize}
+		\item Here we propose an end-to-end approach that can autonomously fly quad rotors through complex natural and human-made environments at high speeds, with purely onboard sensing and computation.
+		
+		\item The key principle is to directly map noisy sensory observations to collision-free trajectories in a receding-horizon \autocite{receding_horizon} fashion. 
+		
+		\item This direct mapping drastically reduces processing latency and increases robustness to noisy and incomplete perception. 
+		
+		\item The sensorimotor mapping is performed by a convolutional network
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Constraints to meet}
+	\begin{itemize}
+		\item The perception system has to be robust to disturbances such as sensor noise, motion blur, and changing illumination conditions
+		\item An effective planner is necessary to find a path that is both dynamically feasible and collision-free while relying only on noisy and partial observations of the environment.
+		\item The limited computational resources that are available on board, make it difficult to achieve reliable perception and effective planning at low latency and high speeds.
+		\item Other factors such as aerodynamics, torque, power, reaction delays etc.
+	\end{itemize}
+	The limiting factor for autonomous agile flight in arbitrary unknown environments is the \textbf{\textit{coupling of fast and robust perception with effective planning}}.
+\end{frame}
+
+\begin{frame}{Training}
+	\begin{itemize}
+		\item Trained exclusively in simulation via privileged learning: imitating an expert with access to privileged information. 
+		\item By simulating realistic sensor noise, this approach achieves zero-shot transfer from simulation to challenging real-world environments that were never experienced during training.		
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Results}
+	End-to-end policies trained in simulation enable high-speed autonomous flight through challenging environments, outperforming traditional obstacle avoidance pipelines.
+\end{frame}
+
+\begin{frame}{State of the art Model}
+	\begin{itemize}
+		\item Some works tackle only perception and build high-quality maps from imperfect measurements [5–9], 
+		\item Other works focus on planning without considering perception errors [10–13]. 
+		\item Numerous systems that combine online mapping with traditional planning algorithms have been proposed to achieve autonomous flight in previously unknown environments [14–22]. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Taxonomy of existing approaches for drone navigation}
+	\centering
+	\begin{figure}
+		\includegraphics[height=2in]{images/taxonomy_navigation.png}
+		\caption{Taxonomy of existing approaches for drone navigation in challenging and cluttered environments. Approaches are ordered withrespect to the required prior knowledge about the environment and the maximum agility they achieve.}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Traditional Method}
+	The division of the navigation task into the \textbf{mapping and planning subtasks} is 
+	\begin{itemize}
+		\item Attractive from an engineering perspective because it enables parallel progress on each component and makes the overall system interpretable. 
+		\item It leads to pipelines that largely neglect interactions between the different stages and thus compound errors. 
+		\item Their sequential nature also introduces additional latency.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Recent works}
+	\begin{itemize}
+		\item Propose to learn end-to-end policies directly from data without explicit mapping and planning stages. 
+		\item These policies are trained by imitating a human, from experience that was collected in simulation, or directly in the real world. More recent work has demonstrated that very agile control policies can be trained in simulation. 
+		\item Policies produced by the last approach can successfully perform acrobatic maneuvers, but can only operate in unobstructed free space and are essentially blind to obstacles in the environment.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{This works}
+	Here we present an approach to fly a quad rotor at high speeds in a variety of environments with complex obstacle geometry while having access to only onboard sensing and computation. By predicting navigation commands directly from sensor measurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such as motion blur, missing data, and sensor noise.
+\end{frame}
+
+\begin{frame}{Input}
+	We leverage the abstraction of the input data to transfer the policy from simulation to reality. To this end, we utilize a stereo matching algorithm \autocite{stereoMatching} to provide depth images as input to the policy. 
+\end{frame}
+
+
+\begin{frame}{Navigation Policy}
+	We train the navigation policy via privileged learning \autocite{Privileged_Learning} on demonstrations that are provided by a sampling-based expert. The existing global planning algorithms \autocite{global_planning} generally output a single trajectory, our expert uses Metropolis-Hastings \autocite{MH_hasting} sampling to compute a distribution of collision-free trajectories. We use our planner to compute trajectories with a short time horizon to ensure that they are predictable from onboard sensors and that the sampler remains computationally tractable. We bias the sampler toward obstacle-free regions by conditioning it on trajectories from a classic global planning algorithm [13].
+	
+\end{frame}
+
+\begin{frame}{Neural Network Policy}
+	We also reflect the multi-modal nature of the problem in the design and training of the neural network policy. Our policy takes a noisy depth image and inertial measurements as sensory inputs and produces a set of short-term trajectories together with an estimate of individual trajectory costs. The trajectories are represented as high-order polynomials to ensure dynamical feasibility. We train the policy using a multi-hypothesis winner-takes-all loss that adaptively maps the predicted trajectories to the best trajectories that have been found by the sampling-based expert. The policy network is designed to be extremely lightweight, which ensures that it can be executed on board the quadrotor at the update rates required for high-speed flight.
+	
+\end{frame}
+
+
+\section{References}
+\begin{frame}[allowframebreaks, noframenumbering]{References}
+	\printbibliography
+\end{frame}
 
 %------------------------------------------------
-\section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+\section{First Section}
 %------------------------------------------------
 
 \subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
@@ -232,7 +321,7 @@ Uncomment the code on this slide to include your own image from the same directo
 \frametitle{Citation}
 An example of the \verb|\cite| command to cite within the presentation:\\~
 
-This statement requires citation \cite{p1}.
+This statement requires citation.
 \end{frame}
 
 %------------------------------------------------
