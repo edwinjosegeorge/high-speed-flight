@@ -185,18 +185,18 @@
 	\end{figure}
 \end{frame}
 
-\begin{frame}{Input}
+\section{Methodology}
+\begin{frame}{Input (incomplete)}
 	We leverage the abstraction of the input data to transfer the policy from simulation to reality. To this end, we utilize a stereo matching algorithm \autocite{stereoMatching} to provide depth images as input to the policy. 
 \end{frame}
 
 
-\section{Methodology}
-\begin{frame}{Navigation Policy}
+\begin{frame}{Navigation Policy (incomplete)}
 	We train the navigation policy via privileged learning \autocite{Privileged_Learning} on demonstrations that are provided by a sampling-based expert. The existing global planning algorithms \autocite{global_planning} generally output a single trajectory, our expert uses Metropolis-Hastings \autocite{MH_hasting} sampling to compute a distribution of collision-free trajectories. We use our planner to compute trajectories with a short time horizon to ensure that they are predictable from onboard sensors and that the sampler remains computationally tractable. We bias the sampler toward obstacle-free regions by conditioning it on trajectories from a classic global planning algorithm [13].
 	
 \end{frame}
 
-\begin{frame}{Neural Network Policy}
+\begin{frame}{Neural Network Policy (incomplete)}
 	We also reflect the multi-modal nature of the problem in the design and training of the neural network policy. Our policy takes a noisy depth image and inertial measurements as sensory inputs and produces a set of short-term trajectories together with an estimate of individual trajectory costs. The trajectories are represented as high-order polynomials to ensure dynamical feasibility. We train the policy using a multi-hypothesis winner-takes-all loss that adaptively maps the predicted trajectories to the best trajectories that have been found by the sampling-based expert. The policy network is designed to be extremely lightweight, which ensures that it can be executed on board the quadrotor at the update rates required for high-speed flight.
 	
 \end{frame}
@@ -310,23 +310,16 @@
 
 \begin{frame}{Effect of latency and noise - graphs}
 	\begin{figure}
-		\includegraphics{images/noise-graph.png}
-		\caption{The effect of sensor noise on performance}
+		\includegraphics[width=4in]{images/noise-graph.png}
+		\caption{The effect of sensor noise on performance. The experiment is performed on ground-truth-depth (1) and stereo-depth (2)}
 	\end{figure}
 \end{frame}
 
-\begin{frame}{Ground-truth depth}
-	Figure 5B1 illustrates the results of this experiment when perfect depth perception (Figure 5A1) is available. All approaches can complete the task perfectly up to 5$m/s$ . However, even in these ideal conditions, the performance of the baselines drops for speeds beyond 5$m/s$ . Our approach can successfully avoid the obstacle without a single failure up to 7 $m/s$ . For higher speeds, performance gracefully degrades to 60percent at 10 $m/s$. This decrease in performance can be attributed to the sensitivity to imperfect network predictions when flying at high speed, where a single wrong action can lead to a crash. 
-\end{frame}
-
-\begin{frame}{Estimated depth}
-	we now study the influence of imperfect sensory measurements on performance. We repeat the same experiment, but provide all methods with depth maps that have been computed from
-	the stereo pairs (Figure 5A2). The baselines experience a significant drop in performance compared with when provided with perfect sensory readings. Fast- Planner completely fails for speeds of 5 $m/s$ and beyond. The performance of the Reactive baseline drops by 30percent at 7 $m/s$ .  In contrast to the baselines, our approach is only marginally affected by the noisy depth readings, with only a 10percent drop in performance at 10 m $m/s$ , but no change in performance at lower speeds. This is because our policy, trained on depth from stereo, learns to account for common issues in the data such as discretization artifacts and missing values.
-	
-\end{frame}
-
-\begin{frame}{Summary}
-	End-to-end policies trained in simulation enable high-speed autonomous flight through challenging environments, outperforming traditional obstacle avoidance pipelines.
+\begin{frame}{Effect of latency and noise - images}
+	\begin{figure}
+		\includegraphics[width=4in]{images/stimulation and stereo.png}
+		\caption{The image perceived by the system}
+	\end{figure}
 \end{frame}
 
 \section{Conclusions}
