@@ -53,6 +53,7 @@
 \usepackage{booktabs}
 \usepackage{subfig}
 \usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage[%
 	autocite    = superscript,
 	backend     = bibtex,
@@ -157,14 +158,6 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{This work}
-	\begin{itemize}
-		\item Here we present an approach to fly a quad rotor at high speeds in a variety of environments with complex obstacle geometry while having access to only onboard sensing and computation. 
-		\item By predicting navigation commands directly from sensor measurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such as motion blur, missing data, and sensor noise.
-	\end{itemize}
-	
-\end{frame}
-
 \begin{frame}{Taxonomy of existing approaches for drone navigation}
 	\centering
 	\begin{figure}
@@ -176,25 +169,74 @@
 \section{Methodology}
 \begin{frame}{Sensorimotor Policy}
 	\begin{itemize}
-		\item The sensorimotor policy predicts receding-horizon \autocite{receding_horizon} trajectories from on-board sensor measurements and a reference trajectory.
+		\item It predicts receding-horizon \autocite{receding_horizon} trajectories from on-board sensor measurements and a reference trajectory.
 		
 		\item Inputs
 		\begin{itemize}
-			\item Depth Image $d \in \mathbb{R}^{640*480}$
+			\item Depth Image $d \in \mathbb{R}^{640*480}$ from Semi-Global Matching algorithm
 			\item Estimate of the platform velocity $v \in \mathbb{R}^3$
 			\item Attitude (rotation matrix) $q \in \mathbb{R}^9$
 			\item Desired flight direction $\omega \in \mathbb{R}^3$
 		\end{itemize}
 	
-		\item Outputs : A set of motion hypotheses which are represented as
-receding-horizon trajectories with the corresponding estimated risk of collision. 
-		
-		\item A model \textbf{predictive controller} then tracks the trajectory with
-the lowest collision probability and input cost. The controller is trained
-		using privileged learning.
-		
+		\item Outputs : A set of motion hypotheses with the corresponding estimated risk of collision. 
 		
 	\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{The Privileged expert}
+	It is a sampling-based motion planning algorithm with global planning \autocite{global_planning}.
+	
+	\begin{block}{Probability of trajectory}
+	
+	\begin{flalign}
+		P(\tau | \tau_{ref},C) = & \frac{1}{Z} exp(-c(\tau, \tau_{ref},C)) \\
+		Z = & \int_{\tau} P(\tau | \tau_{ref},C) 
+	\end{flalign}
+
+	\end{block}
+
+	\begin{equation}
+		\begin{aligned}
+			c(\tau, \tau_{ref},C) = & \int_0^1 \lambda_c C_{collision(\tau(t))} +  \\
+			& \int_0^1[\tau(t) - \tau_{ref}(t)]^\top Q[\tau(t) - \tau_{ref}(t)] \,dt\
+		\end{aligned}
+	\end{equation}
+
+	
+
+	\begin{equation}
+		C_{collision}(\tau(t)) = 
+		\begin{cases}
+			0 & \text{if $d_c > 2r_q$}\\
+			-d^2_c / r^2_q + 4 & \text{otherwise}
+		\end{cases} 
+	\end{equation}
+
+
+
+	Way too complex! To approximate the density P, we use random sampling using M-H algorithm \autocite{MH_hasting}. \\~\\
+	
+	To decrease the dimension of the sampling space, We represent trajectory as a
+	\textbf{cubic B-spline} $\tau_{bspline} \in \mathbb{R}^{3*3} $ curve with three control points and a
+uniform knot vector.
+
+\end{frame}
+
+\begin{frame}{The student Policy}
+	\begin{itemize}
+		\item It produces collision-free trajectories in real time with access only to on-board sensor measurements.
+		\item Make use of pre-trained MobileNetV3 architecture \autocite{MobileNet}
+		\item Perceptron network engage in combining features.
+		\begin{block}{Output}
+			\begin{flalign}
+				\mathbb{T}_n & = \{ (\tau_n^k, c_k) | \in [0, 1, ..., M-1 ]\} \\
+				\tau_n^k & = [p(t_i)]_{i=1}^{10}, t_i = \frac{i}{10}
+			\end{flalign}
+		\end{block}
+		
+	\end{itemize}
+	
 \end{frame}
 
 \begin{frame}{Method overview}
@@ -202,43 +244,6 @@ the lowest collision probability and input cost. The controller is trained
 		\includegraphics[width=4in]{images/method-overview.png}
 		\caption{Overview of method}
 	\end{figure}
-\end{frame}
-
-\begin{frame}{Method overview}
-	\begin{itemize}
-		\item (A) Offline planning algorithm computes a distribution of collision-free trajectories to follow a reference trajectory. 
-		\item The trajectories are computed with Metropolis-Hastings sampling and are conditioned on complete 3D knowledge of the environment
-		\item (B) A sensorimotor agent is trained with imitation learning to predict the best three trajectories
-		\item (C) The predictions are projected on the
-space of polynomial trajectories and ranked according to their predicted collision cost $c_k$ . 
-		\item The trajectory with the lowest predicted cost $c_k$ is then
-tracked with a model predictive controller.
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{Input (incomplete)}
-	We leverage the abstraction of the input data to transfer the policy from simulation to reality. To this end, we utilize a stereo matching algorithm \autocite{stereoMatching} to provide depth images as input to the policy. 
-\end{frame}
-
-
-\begin{frame}{Navigation Policy (incomplete)}
-	\begin{itemize}
-		\item Trained via privileged learning \autocite{Privileged_Learning} on demonstrations that are provided by a sampling-based expert. 
-		\item The expert uses Metropolis-Hastings \autocite{MH_hasting} sampling to compute a distribution of collision-free trajectories.
-		\item The Planner compute trajectories with a short time horizon 
-		\item The sampler is biased toward obstacle-free regions by conditioning it on trajectories from a classic global planning algorithm\autocite{global_planning}.
-	\end{itemize}
-	
-\end{frame}
-
-\begin{frame}{Neural Network Policy (incomplete)}
-	\begin{itemize}
-		\item It takes a noisy depth image and inertial measurements as sensory inputs and produces a set of short-term trajectories together with an estimate of individual trajectory costs. 
-		\item The policy trained using a multi-hypothesis winner-takes-all loss that adaptively maps the predicted trajectories to the best trajectories that have been found by the sampling-based expert. 
-		\item The policy network is extremely lightweight - matching update rates for high-speed flight.
-	\end{itemize}
-	
-	
 \end{frame}
 
 \section{Result}
@@ -374,7 +379,7 @@ tracked with a model predictive controller.
 		\textbf{Reason}: At higher speeds, feasible solutions require temporal consistency over a long time horizon and strong variations of the instantaneous flying speed.\\
 		\textbf{Solution} : Engineering a more complex expert by specifically tailored heuristics to find approximate solutions. 
 		
-		\item Perception latency: Faster sensors can provide more information in smaller amount of time. This could enable further reducing sensitivity-to-noise and promote a quicker understanding of the environment. 
+		\item Perception latency: Faster sensors can provide more information in smaller amount of time. This could enable further reducing sensitivity-to-noise and promote a quicker understanding of the environment. \\
 		\textbf{Solution} : Use of event cameras, especially in the presence of dynamic obstacles.
 		
 		\item Mismatch between the simulated and physical drone in terms of dynamics and perception. \\
