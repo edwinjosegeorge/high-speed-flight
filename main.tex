@@ -52,6 +52,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{subfig}
+\usepackage{amssymb}
 \usepackage[%
 	autocite    = superscript,
 	backend     = bibtex,
@@ -141,7 +142,8 @@
 		\begin{itemize}
 			\item 3d euclidean signed distance fields
 			\item pushbroom stereo
-			\item Rapid explorationwith multi-rotors
+			\item Rapid exploration
+with multi-rotors
 		\end{itemize} 
 	\end{itemize}
 \end{frame}
@@ -186,6 +188,44 @@
 \end{frame}
 
 \section{Methodology}
+\begin{frame}{Sensorimotor Policy}
+	\begin{itemize}
+		\item The sensorimotor policy predicts receding-horizon \autocite{receding_horizon} trajectories from on-board sensor measurements and a reference trajectory.
+		
+		\item Inputs
+		\begin{itemize}
+			\item Depth Image $d \in \mathbb{R}^{640*480}$
+			\item Estimate of the platform velocity $v \in \mathbb{R}^3$
+			\item Attitude (rotation matrix) $q \in \mathbb{R}^9$
+			\item Desired flight direction $\omega \in \mathbb{R}^3$
+		\end{itemize}
+	
+		\item Outputs : A set of motion hypotheses which are represented asreceding-horizon trajectories with the corresponding estimated risk of collision. 
+		
+		\item A model \textbf{predictive controller} then tracks the trajectory withthe lowest collision probability and input cost. The controller is trained
+		using privileged learning.
+		
+		
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Method overview}
+	\begin{figure}
+		\includegraphics[width=4in]{images/method-overview.png}
+		\caption{Overview of method}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Method overview}
+	\begin{itemize}
+		\item (A) Offline planning algorithm computes a distribution of collision-free trajectories to follow a reference trajectory. 
+		\item The trajectories are computed with Metropolis-Hastings sampling and are conditioned on complete 3D knowledge of the environment
+		\item (B) A sensorimotor agent is trained with imitation learning to predict the best three trajectories
+		\item (C) The predictions are projected on thespace of polynomial trajectories and ranked according to their predicted collision cost $c_k$ . 
+		\item The trajectory with the lowest predicted cost $c_k$ is thentracked with a model predictive controller.
+	\end{itemize}
+\end{frame}
+
 \begin{frame}{Input (incomplete)}
 	We leverage the abstraction of the input data to transfer the policy from simulation to reality. To this end, we utilize a stereo matching algorithm \autocite{stereoMatching} to provide depth images as input to the policy. 
 \end{frame}
@@ -258,11 +298,13 @@
 		\begin{itemize}
 			\item Mapping and planning method - FastPlanner
 			\begin{itemize}
-				\item incrementally builds a map from a series of observations and plans a trajectory in this map to reach thegoal while avoiding obstacles.
+				\item incrementally builds a map from a series of observations and plans a trajectory in this map to reach the
+goal while avoiding obstacles.
 			\end{itemize}
 			\item Reactive planner
 			\begin{itemize}
-				\item uses instantaneous depth information to select the best trajectory from a set of pre-defined motion primitives	based on a cost that encodes collision and progress toward the goal.
+				\item uses instantaneous depth information to select the best trajectory from a set of pre-defined motion primitives
+	based on a cost that encodes collision and progress toward the goal.
 			\end{itemize}
 		\end{itemize}
 	
