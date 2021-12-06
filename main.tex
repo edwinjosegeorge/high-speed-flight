@@ -42,9 +42,9 @@
 %\usecolortheme{wolverine}
 
 %\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
-%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+\setbeamertemplate{footline}[frame number] % To replace the footer line in all slides with a simple slide count uncomment this line
 
-%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
 
 \setbeamertemplate{caption}[numbered]
 }
@@ -89,64 +89,36 @@
 %	PRESENTATION SLIDES
 %----------------------------------------------------------------------------------------
 \section{Introduction}
-\begin{frame}{Quad-drones}
+\begin{frame}{Introduction}
 	\begin{itemize}
-		\item They are the most agile and dynamic machines, traversing extremely complex environments at high speeds. 
-		\item This ability has led to their application in fields such as search and rescue, logistics, security, infrastructure, entertainment, and agriculture.
-		\item To date, only expert human pilots have been able to fully exploit their capabilities. 
-		\item Training of expert piolts - time consuming and costly
-		\item The limiting factor for autonomous agile flight in arbitrary unknown environments is the coupling of fast and robust perception with effective planning. 
-	\end{itemize}
-\end{frame}
-
-\begin{frame}{State of the art}
-	\begin{itemize}
-		\item Autonomous operation with onboard sensing and computation has been limited to low speeds. 
-		\item Separate the navigation problem into subtasks: sensing, mapping, and planning. \\
-		This approach has proven successful at low speeds
-		\item The sub tasks are executed sequentially, leading to increased processing latency and compounding of errors through the pipeline.
-		\item These issues can be mitigated to some degree by careful hand-tuning and engineering.
+		\item Quadrotors (drones) are the most agile and dynamic machines, traversing extremely complex environments at high speeds. 
+		\item State of the art autonomous operation with onboard sensing and computation has been limited to low speeds.
+		\item This limiting factor for autonomous agile flight in arbitrary unknown environments is the coupling of fast and robust perception with effective planning. 
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Proposed Solution}
 	\begin{itemize}
-		\item Here we propose an end-to-end approach that can autonomously fly quad rotors through complex natural and human-made environments at high speeds, with purely onboard sensing and computation.
-		
-		\item The key principle is to directly map noisy sensory observations to collision-free trajectories in a receding-horizon \autocite{receding_horizon} fashion. 
-		
+		\item An end-to-end approach that directly map noisy sensory observations to collision-free trajectories in a receding-horizon \autocite{receding_horizon} fashion, with purely onboard sensing and computation.
+			
 		\item This direct mapping drastically reduces processing latency and increases robustness to noisy and incomplete perception. 
 		
-		\item The sensorimotor mapping is performed by a convolutional network
+		\item The sensorimotor mapping is performed by a convolutional network.
 	\end{itemize}
 \end{frame}
 
 \section{Constraints}
 \begin{frame}{Constraints to meet}
 	\begin{itemize}
-		\item The perception system has to be robust to disturbances such as sensor noise, motion blur, and changing illumination conditions
-		\item An effective planner is necessary to find a path that is both dynamically feasible and collision-free while relying only on noisy and partial observations of the environment.
-		\item The limited computational resources that are available on board, make it difficult to achieve reliable perception and effective planning at low latency and high speeds.
+		\item Must be robust to disturbances such as sensor noise, motion blur, and changing illumination conditions.
+		\item An effective planner to find a path that is both dynamically feasible and collision-free while relying only on noisy and partial observations of the environment.
+		\item The limited computational resources that are available on board, 
 		\item Other factors such as aerodynamics, torque, power, reaction delays etc.
 	\end{itemize}
-	The limiting factor for autonomous agile flight in arbitrary unknown environments is the \textbf{\textit{coupling of fast and robust perception with effective planning}}.
 \end{frame}
 
 
 \section{Model evolution}
-\begin{frame}{State of the art Model}
-	\begin{itemize}
-		\item Some works tackle only perception and build high-quality maps from imperfect measurements. 
-		\item Other works focus on planning without considering perception errors. 
-		\item Numerous systems that combine online mapping with traditional planning algorithms have been proposed to achieve autonomous flight in previously unknown environments.
-		\begin{itemize}
-			\item 3d euclidean signed distance fields
-			\item pushbroom stereo
-			\item Rapid exploration
-with multi-rotors
-		\end{itemize} 
-	\end{itemize}
-\end{frame}
 
 \begin{frame}{Traditional Methodology}
 	\begin{itemize}
@@ -163,15 +135,29 @@ with multi-rotors
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Recent Models}
+\begin{frame}{State of the art Model}
 	\begin{itemize}
-		\item Proposal to learn end-to-end policies directly from data without explicit mapping and planning stages. 
-		\item These policies are trained by imitating a human, from experience that was collected in simulation, or directly in the real world. More recent work has demonstrated that very agile control policies can be trained in simulation. 
-		\item Policies produced by the last approach can successfully perform acrobatic maneuvers, but can only operate in unobstructed free space and are essentially blind to obstacles in the environment.
+		\item Some works tackle only perception and build high-quality maps from imperfect measurements. 
+		\item Other works focus on planning without considering perception errors. 
+		\item Numerous systems that combine online mapping with traditional planning algorithms have been proposed to achieve autonomous flight in unknown environments.
+		\begin{itemize}
+			\item 3D euclidean signed distance fields
+			\item Pushbroom stereo
+			\item Rapid exploration with multi-rotors
+		\end{itemize} 
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{This works}
+\begin{frame}{Recent Models}
+	\begin{itemize}
+		\item Proposal to learn end-to-end policies directly from data without explicit mapping and planning stages. 
+		\item These policies are trained by imitating a human, from experience (or stimulation). 
+		\item More recent work has demonstrated that very agile control policies can be trained in simulation. 
+		\item Policies produced by the last approach can successfully perform acrobatic maneuvers, but can only operate in unobstructed free space.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{This work}
 	\begin{itemize}
 		\item Here we present an approach to fly a quad rotor at high speeds in a variety of environments with complex obstacle geometry while having access to only onboard sensing and computation. 
 		\item By predicting navigation commands directly from sensor measurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such as motion blur, missing data, and sensor noise.
@@ -200,9 +186,11 @@ with multi-rotors
 			\item Desired flight direction $\omega \in \mathbb{R}^3$
 		\end{itemize}
 	
-		\item Outputs : A set of motion hypotheses which are represented asreceding-horizon trajectories with the corresponding estimated risk of collision. 
+		\item Outputs : A set of motion hypotheses which are represented as
+receding-horizon trajectories with the corresponding estimated risk of collision. 
 		
-		\item A model \textbf{predictive controller} then tracks the trajectory withthe lowest collision probability and input cost. The controller is trained
+		\item A model \textbf{predictive controller} then tracks the trajectory with
+the lowest collision probability and input cost. The controller is trained
 		using privileged learning.
 		
 		
@@ -221,8 +209,10 @@ with multi-rotors
 		\item (A) Offline planning algorithm computes a distribution of collision-free trajectories to follow a reference trajectory. 
 		\item The trajectories are computed with Metropolis-Hastings sampling and are conditioned on complete 3D knowledge of the environment
 		\item (B) A sensorimotor agent is trained with imitation learning to predict the best three trajectories
-		\item (C) The predictions are projected on thespace of polynomial trajectories and ranked according to their predicted collision cost $c_k$ . 
-		\item The trajectory with the lowest predicted cost $c_k$ is thentracked with a model predictive controller.
+		\item (C) The predictions are projected on the
+space of polynomial trajectories and ranked according to their predicted collision cost $c_k$ . 
+		\item The trajectory with the lowest predicted cost $c_k$ is then
+tracked with a model predictive controller.
 	\end{itemize}
 \end{frame}
 
@@ -232,18 +222,28 @@ with multi-rotors
 
 
 \begin{frame}{Navigation Policy (incomplete)}
-	We train the navigation policy via privileged learning \autocite{Privileged_Learning} on demonstrations that are provided by a sampling-based expert. The existing global planning algorithms \autocite{global_planning} generally output a single trajectory, our expert uses Metropolis-Hastings \autocite{MH_hasting} sampling to compute a distribution of collision-free trajectories. We use our planner to compute trajectories with a short time horizon to ensure that they are predictable from onboard sensors and that the sampler remains computationally tractable. We bias the sampler toward obstacle-free regions by conditioning it on trajectories from a classic global planning algorithm [13].
+	\begin{itemize}
+		\item Trained via privileged learning \autocite{Privileged_Learning} on demonstrations that are provided by a sampling-based expert. 
+		\item The expert uses Metropolis-Hastings \autocite{MH_hasting} sampling to compute a distribution of collision-free trajectories.
+		\item The Planner compute trajectories with a short time horizon 
+		\item The sampler is biased toward obstacle-free regions by conditioning it on trajectories from a classic global planning algorithm\autocite{global_planning}.
+	\end{itemize}
 	
 \end{frame}
 
 \begin{frame}{Neural Network Policy (incomplete)}
-	We also reflect the multi-modal nature of the problem in the design and training of the neural network policy. Our policy takes a noisy depth image and inertial measurements as sensory inputs and produces a set of short-term trajectories together with an estimate of individual trajectory costs. The trajectories are represented as high-order polynomials to ensure dynamical feasibility. We train the policy using a multi-hypothesis winner-takes-all loss that adaptively maps the predicted trajectories to the best trajectories that have been found by the sampling-based expert. The policy network is designed to be extremely lightweight, which ensures that it can be executed on board the quadrotor at the update rates required for high-speed flight.
+	\begin{itemize}
+		\item It takes a noisy depth image and inertial measurements as sensory inputs and produces a set of short-term trajectories together with an estimate of individual trajectory costs. 
+		\item The policy trained using a multi-hypothesis winner-takes-all loss that adaptively maps the predicted trajectories to the best trajectories that have been found by the sampling-based expert. 
+		\item The policy network is extremely lightweight - matching update rates for high-speed flight.
+	\end{itemize}
+	
 	
 \end{frame}
 
 \section{Result}
 
-\subsection{Real-world environment}
+\subsection{Real-world Environment}
 \begin{frame}{Method of evaluation}
 	'\begin{itemize}
 		\item Results are confirmed in a variety of real-world environments using a \textit{custom-built physical quadrotor}
@@ -297,21 +297,11 @@ with multi-rotors
 		\item Two representative state-of-the-art approaches as selected as baselines for navigation in unknown environments: 
 		\begin{itemize}
 			\item Mapping and planning method - FastPlanner
-			\begin{itemize}
-				\item incrementally builds a map from a series of observations and plans a trajectory in this map to reach the
-goal while avoiding obstacles.
-			\end{itemize}
 			\item Reactive planner
-			\begin{itemize}
-				\item uses instantaneous depth information to select the best trajectory from a set of pre-defined motion primitives
-	based on a cost that encodes collision and progress toward the goal.
-			\end{itemize}
 		\end{itemize}
 	
-		\item All experiments are stimulated in the Flightmare simulator using the RotorS Gazebo plugin for accurate physics modeling and Unity as a rendering engine.
+		\item Experiments are stimulated in the \textit{Flightmare simulator} using the RotorS Gazebo plugin for physics modeling and Unity as a rendering engine.
 		
-		\item The experiments are conducted in four different environments: a forest, a narrow gap, a disaster scenario, and a city street.
-	
 	\end{itemize}
 \end{frame}
 
@@ -369,34 +359,27 @@ goal while avoiding obstacles.
 	\begin{itemize}
 		\item We achieve high speed flight by training a neural network to imitate an expert with privileged information in simulation.
 		
-		\item To cope with the complexity of the task and to enable seamless transfer from simulation to reality, several technical contributions accounting multi-modality include
-		\begin{itemize}
-			\item sampling-based expert
-			\item neural network architecture
-			\item training procedure
-		\end{itemize} 
+		\item Coping with the complexity of the task and to enable seamless transfer from simulation to reality, several technical contributions accounting multi-modality are proposed.
 		
-		\item We use an abstract, but sufficiently rich input representation that considers real-world sensor noise.
+		\item The combination of these innovations enables the training of robust navigation policies in simulation that can be directly transferred to diverse real-world environments without any fine-tuning on real data.
 	\end{itemize}
-	The combination of these innovations enables the training of robust navigation policies in simulation that can be directly transferred to diverse real-world environments without any fine-tuning on real data.
+	
 	
 \end{frame}
 
 \section{Future Scope}
 \begin{frame}[allowframebreaks]{Opportunities for future works}
 	\begin{itemize}
-		\item Low success rates at average speeds of 10 $m/s$ or higher in the real world. \\
+		\item Low success rates at average speeds of $10 ms^{-1}$ or higher in the real world. \\
 		\textbf{Reason}: At higher speeds, feasible solutions require temporal consistency over a long time horizon and strong variations of the instantaneous flying speed.\\
 		\textbf{Solution} : Engineering a more complex expert by specifically tailored heuristics to find approximate solutions. 
 		
-		\item Perception latency: Faster sensors can provide more information about the environment in a smaller amount of time. This could enable further reducing sensitivity to noise and promote a quicker understanding of the environment. 
+		\item Perception latency: Faster sensors can provide more information in smaller amount of time. This could enable further reducing sensitivity-to-noise and promote a quicker understanding of the environment. 
 		\textbf{Solution} : Use of event cameras, especially in the presence of dynamic obstacles.
 		
 		\item Mismatch between the simulated and physical drone in terms of dynamics and perception. \\
-		\textbf{Reason} : aerodynamics effects, motor delays, and dropping battery voltage. \\
-		\textbf{Solution} : Increasing the fidelity of the simulated drone and making the policy robust to the unavoidable model mismatches.
-		
-		
+		\textbf{Reason} : Aerodynamics effects, motor delays, and dropping battery voltage. \\
+		\textbf{Solution} : Increasing the fidelity of the simulated drone and making the policy robust to the unavoidable model mismatches.		
 	\end{itemize}
 	
 \end{frame}
