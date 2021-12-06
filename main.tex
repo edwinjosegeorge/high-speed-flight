@@ -51,6 +51,7 @@
 
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{subfig}
 \usepackage[%
 	autocite    = superscript,
 	backend     = bibtex,
@@ -202,6 +203,7 @@
 
 \section{Result}
 
+\subsection{Real-world environment}
 \begin{frame}{Method of evaluation}
 	'\begin{itemize}
 		\item Results are confirmed in a variety of real-world environments using a \textit{custom-built physical quadrotor}
@@ -239,26 +241,78 @@
 
 \begin{frame}{Natural and Human-made environment - Graph }
 	\begin{figure}
-		\includegraphics[width=1.5in]{images/natural-human-linegraph.png}
-		\includegraphics[width=2.5in]{images/natural-human-bargraph.png}
+		\subfloat[Aggregate result]{
+			\includegraphics[width=1.5in]{images/natural-human-linegraph.png}
+		}
+		\subfloat[Individual result]{
+			\includegraphics[width=2.5in]{images/natural-human-bargraph.png}
+		}
+		\caption{Trails on natural and human-made environment on physical drone}
 	\end{figure}
 \end{frame}
 
-\begin{frame}{Controlled Experiments}
-	We perform a set of controlled experiments in simulation to compare the performance of our approach with several baselines. We select two representative state-of-the-art approaches as baselines for navigation in unknown environments: \textbf{the mapping and planning method of Zhou et al. [18] (FastPlanner) and the reactive planner of Florence et al. [32] (Reactive)}.  We perform all experiments in the Flightmare simulator [33] using the RotorS [34] Gazebo plugin for accurate physics modeling and Unity as a rendering engine [35]. The experiments are conducted in four different environments: a forest, a narrow gap, a disaster scenario, and a city street.  \\~\\
+\subsection{Stimulated Environment}
+\begin{frame}{Controlled Experiments - Comparative results}
+	\begin{itemize}
+		\item Two representative state-of-the-art approaches as selected as baselines for navigation in unknown environments: 
+		\begin{itemize}
+			\item Mapping and planning method - FastPlanner
+			\begin{itemize}
+				\item incrementally builds a map from a series of observations and plans a trajectory in this map to reach thegoal while avoiding obstacles.
+			\end{itemize}
+			\item Reactive planner
+			\begin{itemize}
+				\item uses instantaneous depth information to select the best trajectory from a set of pre-defined motion primitives	based on a cost that encodes collision and progress toward the goal.
+			\end{itemize}
+		\end{itemize}
 	
-	Throughout all environments, a similar pattern can be observed. At low speeds (3 $m/s$ ) all methods perform similarly. However, as the speed increases, the baselines’ performances quickly drop: already at 5 $m/s$ , no baseline is able to complete all runs without crashing. In contrast, our method can reliably fly at high speeds through all environments, achieving an average success rate of 70 percent at 10 $m/s$. 
+		\item All experiments are stimulated in the Flightmare simulator using the RotorS Gazebo plugin for accurate physics modeling and Unity as a rendering engine.
+		
+		\item The experiments are conducted in four different environments: a forest, a narrow gap, a disaster scenario, and a city street.
+	
+	\end{itemize}
 \end{frame}
 
-\begin{frame}{Computational Cost}
-	Table 1 shows the results of this evaluation. It highlights how each step of the methods contributes to the overall processing latency.  \\
-	With a total computation time of 65.2 ms per frame, FastPlanner incurs the highest processing latency. It is important to note that the temporal filtering operations that are necessary to cope with sensing errors effectively make perception even slower. Two to three observations 	of an obstacle can be required to add it to the map, which increases the effective latency of the system. The Reactive baseline significantly reduces computation time. This baseline is about three times faster than FastPlanner, with a total processing latency of 19.1 ms. However, the reduced processing latency comes at the cost of the trajectory complexity that can be represented, since the planner can only select primitives from a pre-defined library. In addition, the reactive baseline is sensitive to sensing errors, which can drastically affect performance at high speeds. \\~\\
-	Our approach has significantly lower processing latency than both baselines, our approach is 25.3 times faster than FastPlanner and 7.4 times faster than the Reactive baseline. Onboard, the total time to pass from the sensor reading to a plan is 41.6 ms, which corresponds to an update rate of about 24Hz
+\begin{frame}{Controlled Experiments - Graphs}
+	\begin{figure}
+		\includegraphics[width=4in]{images/controlled-experiments.png}
+		\caption{Stimulated results}
+	\end{figure}
 	
 \end{frame}
 
-\begin{frame}{The effect of latency and sensor noise}
-	We analyze the effect of sensor noise and planning latency in a controlled experiment. In this experiment, the quadrotor travels along a straight line at a constant forward speed and is required to laterally evade a single obstacle (a pole) while having only limited sensing range. We set up the experiment by placing a quadrotor with an initial forward velocity v at a distance of 6 m from a pole with a diameter of 1.5 m. The quadrotor is modeled as a sphere with a radius of 0.2 m. According to our formulation, we compute a theoretical maximum speed, i.e. the speed at which the task is no longer feasible—for each method. The maximum speed depends on the sensing range, i.e. how far can an obstacle be accurately perceived, the latency of the visual sensor, i.e. the inverse of the frame rate, and the processing latency, i.e. the time to convert an observation into motor commands.  We then perform the controlled experiment with varying forward speeds v in the range of 3 to 13 $m/s$ . We perform 10 experiments for each speed with all approaches and report the success rate. We run the experiment in two settings: (i) with ground-truth depth information, to isolate the effect of latency on performance, and (ii) with depth estimated by stereo matching [37] to analyze the effect of sensing errors on performance.
+\begin{frame}[allowframebreaks]{The effect of latency and sensor noise}
+	\begin{itemize}
+		\item In this experiment, the quadrotor travels along a straight line at a constant forward speed and is required to laterally evade a single obstacle (a pole) while having only limited sensing range.
+		\item The theoretical maximum speed is the speed at which the task is no longer feasible for each method. 
+		\item The maximum speed depends on 
+		\begin{itemize}
+			\item sensing range - how far can an obstacle be accurately perceived
+			\item latency of the visual sensor - the inverse of the frame rate
+			\item processing latency - the time to convert an observation into motor commands.
+		\end{itemize} 
+	
+		\pagebreak
+		
+		\begin{block}{Formula}
+			theoretical maximum speed
+			\begin{equation}
+				v_{max} = \frac{s}{t_s + t_p + t_{rot} + \sqrt{\frac{2*r_{obs}}{sin(\theta)*c_{max}}}}
+			\end{equation}
+		\end{block}
+		\item The experiment is run in two settings:
+		\begin{itemize}
+			\item with \textbf{ground-truth depth} information - to isolate the effect of latency on performance
+			\item with \textbf{depth estimated by stereo matching}\autocite{stereoMatching} - to analyze the effect of sensing errors on performance.
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Effect of latency and noise - graphs}
+	\begin{figure}
+		\includegraphics{images/noise-graph.png}
+		\caption{The effect of sensor noise on performance}
+	\end{figure}
 \end{frame}
 
 \begin{frame}{Ground-truth depth}
