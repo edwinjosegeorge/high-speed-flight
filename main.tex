@@ -22,8 +22,8 @@
 %\usetheme{default}
 %\usetheme{Antibes}
 %\usetheme{Boadilla}
-%\usetheme{JuanLesPins}
-\usetheme{Madrid}
+\usetheme{JuanLesPins}
+%\usetheme{Madrid}
 %\usetheme{Rochester}
 
 
@@ -119,6 +119,7 @@
 	\end{itemize}
 \end{frame}
 
+\section{Constraints}
 \begin{frame}{Constraints to meet}
 	\begin{itemize}
 		\item The perception system has to be robust to disturbances such as sensor noise, motion blur, and changing illumination conditions
@@ -129,52 +130,58 @@
 	The limiting factor for autonomous agile flight in arbitrary unknown environments is the \textbf{\textit{coupling of fast and robust perception with effective planning}}.
 \end{frame}
 
-\begin{frame}{Training}
-	\begin{itemize}
-		\item Trained exclusively in simulation via privileged learning: imitating an expert with access to privileged information. 
-		\item By simulating realistic sensor noise, this approach achieves zero-shot transfer from simulation to challenging real-world environments that were never experienced during training.		
-	\end{itemize}
-\end{frame}
 
-\begin{frame}{Results}
-	End-to-end policies trained in simulation enable high-speed autonomous flight through challenging environments, outperforming traditional obstacle avoidance pipelines.
-\end{frame}
-
+\section{Model evolution}
 \begin{frame}{State of the art Model}
 	\begin{itemize}
-		\item Some works tackle only perception and build high-quality maps from imperfect measurements [5–9], 
-		\item Other works focus on planning without considering perception errors [10–13]. 
-		\item Numerous systems that combine online mapping with traditional planning algorithms have been proposed to achieve autonomous flight in previously unknown environments [14–22]. 
+		\item Some works tackle only perception and build high-quality maps from imperfect measurements. 
+		\item Other works focus on planning without considering perception errors. 
+		\item Numerous systems that combine online mapping with traditional planning algorithms have been proposed to achieve autonomous flight in previously unknown environments.
+		\begin{itemize}
+			\item 3d euclidean signed distance fields
+			\item pushbroom stereo
+			\item Rapid explorationwith multi-rotors
+		\end{itemize} 
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Taxonomy of existing approaches for drone navigation}
-	\centering
-	\begin{figure}
-		\includegraphics[height=2in]{images/taxonomy_navigation.png}
-		\caption{Taxonomy of existing approaches for drone navigation in challenging and cluttered environments. Approaches are ordered withrespect to the required prior knowledge about the environment and the maximum agility they achieve.}
-	\end{figure}
-\end{frame}
-
-\begin{frame}{Traditional Method}
-	The division of the navigation task into the \textbf{mapping and planning subtasks} is 
+\begin{frame}{Traditional Methodology}
 	\begin{itemize}
+		\item The division of the navigation task into subtask
+		\begin{itemize}
+			\item Sensing
+			\item Mapping
+			\item Planning	
+		\end{itemize} 
+	
 		\item Attractive from an engineering perspective because it enables parallel progress on each component and makes the overall system interpretable. 
 		\item It leads to pipelines that largely neglect interactions between the different stages and thus compound errors. 
 		\item Their sequential nature also introduces additional latency.
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Recent works}
+\begin{frame}{Recent Models}
 	\begin{itemize}
-		\item Propose to learn end-to-end policies directly from data without explicit mapping and planning stages. 
+		\item Proposal to learn end-to-end policies directly from data without explicit mapping and planning stages. 
 		\item These policies are trained by imitating a human, from experience that was collected in simulation, or directly in the real world. More recent work has demonstrated that very agile control policies can be trained in simulation. 
 		\item Policies produced by the last approach can successfully perform acrobatic maneuvers, but can only operate in unobstructed free space and are essentially blind to obstacles in the environment.
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{This works}
-	Here we present an approach to fly a quad rotor at high speeds in a variety of environments with complex obstacle geometry while having access to only onboard sensing and computation. By predicting navigation commands directly from sensor measurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such as motion blur, missing data, and sensor noise.
+	\begin{itemize}
+		\item Here we present an approach to fly a quad rotor at high speeds in a variety of environments with complex obstacle geometry while having access to only onboard sensing and computation. 
+		\item By predicting navigation commands directly from sensor measurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such as motion blur, missing data, and sensor noise.
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}{Taxonomy of existing approaches for drone navigation}
+	\centering
+	\begin{figure}
+		\includegraphics[height=2in]{images/taxonomy_navigation.png}
+		\caption{Taxonomy of existing approaches for drone navigation in challenging and cluttered environments.}
+	\end{figure}
 \end{frame}
 
 \begin{frame}{Input}
@@ -182,6 +189,7 @@
 \end{frame}
 
 
+\section{Methodology}
 \begin{frame}{Navigation Policy}
 	We train the navigation policy via privileged learning \autocite{Privileged_Learning} on demonstrations that are provided by a sampling-based expert. The existing global planning algorithms \autocite{global_planning} generally output a single trajectory, our expert uses Metropolis-Hastings \autocite{MH_hasting} sampling to compute a distribution of collision-free trajectories. We use our planner to compute trajectories with a short time horizon to ensure that they are predictable from onboard sensors and that the sampler remains computationally tractable. We bias the sampler toward obstacle-free regions by conditioning it on trajectories from a classic global planning algorithm [13].
 	
@@ -192,157 +200,121 @@
 	
 \end{frame}
 
+\section{Result}
+
+\begin{frame}{Method of evaluation}
+	'\begin{itemize}
+		\item Results are confirmed in a variety of real-world environments using a \textit{custom-built physical quadrotor}
+		\item Policy trained in simulation was deployed without any further adaptations.
+		\item In all experiments, the drone was provided with a reference trajectory, which is not collision-free.
+		\item The drone is tasked to follow that flight path and make adjustments as necessary to avoid obstacles.
+		\item The performance is measured according to success rate
+		\begin{itemize}
+			\item The percentage of successful runs over the total number of runs
+			\item A run successful if the drone reaches the goal location within a radius of 5 m without crashing.
+		\end{itemize} 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Natural and Human-made environment}
+	\begin{itemize}
+		\item Natural Environment
+		\begin{itemize}
+			\item complex structure
+			\item multiple options available to avoid obstacles. 
+			\item A high-level understanding of the environment is necessary.
+			\item Challenging illumination conditions
+			\item Low texture surfaces (e.g. because of snow)
+		\end{itemize}
+	
+		\item Human-made Environment
+		\begin{itemize}
+			\item Obstacles with a variety of sizes and shapes \\
+			(e.g. a train, a crane, building and ruins)
+			\item Limited number of flyable openings (eg. Narrow openings)
+			\item Requires to initiate the avoidance maneuver well in advance.
+		\end{itemize}
+	\end{itemize}	
+\end{frame}
+
+\begin{frame}{Natural and Human-made environment - Graph }
+	\begin{figure}
+		\includegraphics[width=1.5in]{images/natural-human-linegraph.png}
+		\includegraphics[width=2.5in]{images/natural-human-bargraph.png}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Controlled Experiments}
+	We perform a set of controlled experiments in simulation to compare the performance of our approach with several baselines. We select two representative state-of-the-art approaches as baselines for navigation in unknown environments: \textbf{the mapping and planning method of Zhou et al. [18] (FastPlanner) and the reactive planner of Florence et al. [32] (Reactive)}.  We perform all experiments in the Flightmare simulator [33] using the RotorS [34] Gazebo plugin for accurate physics modeling and Unity as a rendering engine [35]. The experiments are conducted in four different environments: a forest, a narrow gap, a disaster scenario, and a city street.  \\~\\
+	
+	Throughout all environments, a similar pattern can be observed. At low speeds (3 $m/s$ ) all methods perform similarly. However, as the speed increases, the baselines’ performances quickly drop: already at 5 $m/s$ , no baseline is able to complete all runs without crashing. In contrast, our method can reliably fly at high speeds through all environments, achieving an average success rate of 70 percent at 10 $m/s$. 
+\end{frame}
+
+\begin{frame}{Computational Cost}
+	Table 1 shows the results of this evaluation. It highlights how each step of the methods contributes to the overall processing latency.  \\
+	With a total computation time of 65.2 ms per frame, FastPlanner incurs the highest processing latency. It is important to note that the temporal filtering operations that are necessary to cope with sensing errors effectively make perception even slower. Two to three observations 	of an obstacle can be required to add it to the map, which increases the effective latency of the system. The Reactive baseline significantly reduces computation time. This baseline is about three times faster than FastPlanner, with a total processing latency of 19.1 ms. However, the reduced processing latency comes at the cost of the trajectory complexity that can be represented, since the planner can only select primitives from a pre-defined library. In addition, the reactive baseline is sensitive to sensing errors, which can drastically affect performance at high speeds. \\~\\
+	Our approach has significantly lower processing latency than both baselines, our approach is 25.3 times faster than FastPlanner and 7.4 times faster than the Reactive baseline. Onboard, the total time to pass from the sensor reading to a plan is 41.6 ms, which corresponds to an update rate of about 24Hz
+	
+\end{frame}
+
+\begin{frame}{The effect of latency and sensor noise}
+	We analyze the effect of sensor noise and planning latency in a controlled experiment. In this experiment, the quadrotor travels along a straight line at a constant forward speed and is required to laterally evade a single obstacle (a pole) while having only limited sensing range. We set up the experiment by placing a quadrotor with an initial forward velocity v at a distance of 6 m from a pole with a diameter of 1.5 m. The quadrotor is modeled as a sphere with a radius of 0.2 m. According to our formulation, we compute a theoretical maximum speed, i.e. the speed at which the task is no longer feasible—for each method. The maximum speed depends on the sensing range, i.e. how far can an obstacle be accurately perceived, the latency of the visual sensor, i.e. the inverse of the frame rate, and the processing latency, i.e. the time to convert an observation into motor commands.  We then perform the controlled experiment with varying forward speeds v in the range of 3 to 13 $m/s$ . We perform 10 experiments for each speed with all approaches and report the success rate. We run the experiment in two settings: (i) with ground-truth depth information, to isolate the effect of latency on performance, and (ii) with depth estimated by stereo matching [37] to analyze the effect of sensing errors on performance.
+\end{frame}
+
+\begin{frame}{Ground-truth depth}
+	Figure 5B1 illustrates the results of this experiment when perfect depth perception (Figure 5A1) is available. All approaches can complete the task perfectly up to 5$m/s$ . However, even in these ideal conditions, the performance of the baselines drops for speeds beyond 5$m/s$ . Our approach can successfully avoid the obstacle without a single failure up to 7 $m/s$ . For higher speeds, performance gracefully degrades to 60percent at 10 $m/s$. This decrease in performance can be attributed to the sensitivity to imperfect network predictions when flying at high speed, where a single wrong action can lead to a crash. 
+\end{frame}
+
+\begin{frame}{Estimated depth}
+	we now study the influence of imperfect sensory measurements on performance. We repeat the same experiment, but provide all methods with depth maps that have been computed from
+	the stereo pairs (Figure 5A2). The baselines experience a significant drop in performance compared with when provided with perfect sensory readings. Fast- Planner completely fails for speeds of 5 $m/s$ and beyond. The performance of the Reactive baseline drops by 30percent at 7 $m/s$ .  In contrast to the baselines, our approach is only marginally affected by the noisy depth readings, with only a 10percent drop in performance at 10 m $m/s$ , but no change in performance at lower speeds. This is because our policy, trained on depth from stereo, learns to account for common issues in the data such as discretization artifacts and missing values.
+	
+\end{frame}
+
+\begin{frame}{Summary}
+	End-to-end policies trained in simulation enable high-speed autonomous flight through challenging environments, outperforming traditional obstacle avoidance pipelines.
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}{Conclusion}
+	\begin{itemize}
+		\item We achieve high speed flight by training a neural network to imitate an expert with privileged information in simulation.
+		
+		\item To cope with the complexity of the task and to enable seamless transfer from simulation to reality, several technical contributions accounting multi-modality include
+		\begin{itemize}
+			\item sampling-based expert
+			\item neural network architecture
+			\item training procedure
+		\end{itemize} 
+		
+		\item We use an abstract, but sufficiently rich input representation that considers real-world sensor noise.
+	\end{itemize}
+	The combination of these innovations enables the training of robust navigation policies in simulation that can be directly transferred to diverse real-world environments without any fine-tuning on real data.
+	
+\end{frame}
+
+\section{Future Scope}
+\begin{frame}[allowframebreaks]{Opportunities for future works}
+	\begin{itemize}
+		\item Low success rates at average speeds of 10 $m/s$ or higher in the real world. \\
+		\textbf{Reason}: At higher speeds, feasible solutions require temporal consistency over a long time horizon and strong variations of the instantaneous flying speed.\\
+		\textbf{Solution} : Engineering a more complex expert by specifically tailored heuristics to find approximate solutions. 
+		
+		\item Perception latency: Faster sensors can provide more information about the environment in a smaller amount of time. This could enable further reducing sensitivity to noise and promote a quicker understanding of the environment. 
+		\textbf{Solution} : Use of event cameras, especially in the presence of dynamic obstacles.
+		
+		\item Mismatch between the simulated and physical drone in terms of dynamics and perception. \\
+		\textbf{Reason} : aerodynamics effects, motor delays, and dropping battery voltage. \\
+		\textbf{Solution} : Increasing the fidelity of the simulated drone and making the policy robust to the unavoidable model mismatches.
+		
+		
+	\end{itemize}
+	
+\end{frame}
 
 \section{References}
-\begin{frame}[allowframebreaks, noframenumbering]{References}
+\begin{frame}[allowframebreaks]{References}
 	\printbibliography
 \end{frame}
 
-%------------------------------------------------
-\section{First Section}
-%------------------------------------------------
-
-\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
-
-\begin{frame}
-\frametitle{Paragraphs of Text}
-Sed iaculis dapibus gravida. Morbi sed tortor erat, nec interdum arcu. Sed id lorem lectus. Quisque viverra augue id sem ornare non aliquam nibh tristique. Aenean in ligula nisl. Nulla sed tellus ipsum. Donec vestibulum ligula non lorem vulputate fermentum accumsan neque mollis.\\~\\
-
-Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero. Aliquam vel dui orci, a porta odio. Nullam id suscipit ipsum. Aenean lobortis commodo sem, ut commodo leo gravida vitae. Pellentesque vehicula ante iaculis arcu pretium rutrum eget sit amet purus. Integer ornare nulla quis neque ultrices lobortis. Vestibulum ultrices tincidunt libero, quis commodo erat ullamcorper id.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Bullet Points}
-\begin{itemize}
-\item Lorem ipsum dolor sit amet, consectetur adipiscing elit
-\item Aliquam blandit faucibus nisi, sit amet dapibus enim tempus eu
-\item Nulla commodo, erat quis gravida posuere, elit lacus lobortis est, quis porttitor odio mauris at libero
-\item Nam cursus est eget velit posuere pellentesque
-\item Vestibulum faucibus velit a augue condimentum quis convallis nulla gravida
-\end{itemize}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Blocks of Highlighted Text}
-\begin{block}{Block 1}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-\end{block}
-
-\begin{block}{Block 2}
-Pellentesque sed tellus purus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum quis magna at risus dictum tempor eu vitae velit.
-\end{block}
-
-\begin{block}{Block 3}
-Suspendisse tincidunt sagittis gravida. Curabitur condimentum, enim sed venenatis rutrum, ipsum neque consectetur orci, sed blandit justo nisi ac lacus.
-\end{block}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Multiple Columns}
-\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-
-\column{.45\textwidth} % Left column and width
-\textbf{Heading}
-\begin{enumerate}
-\item Statement
-\item Explanation
-\item Example
-\end{enumerate}
-
-\column{.5\textwidth} % Right column and width
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-
-\end{columns}
-\end{frame}
-
-%------------------------------------------------
-\section{Second Section}
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Table}
-\begin{table}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\caption{Table caption}
-\end{table}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Verbatim}
-\begin{example}[Theorem Slide Code]
-\begin{verbatim}
-\begin{frame}
-\frametitle{Theorem}
-\begin{theorem}[Mass--energy equivalence]
-$E = mc^2$
-\end{theorem}
-\end{frame}\end{verbatim}
-\end{example}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{Figure}
-Uncomment the code on this slide to include your own image from the same directory as the template .TeX file.
-%\begin{figure}
-%\includegraphics[width=0.8\linewidth]{test}
-%\end{figure}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}[fragile] % Need to use the fragile option when verbatim is used in the slide
-\frametitle{Citation}
-An example of the \verb|\cite| command to cite within the presentation:\\~
-
-This statement requires citation.
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\frametitle{References}
-\footnotesize{
-\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[Smith, 2012]{p1} John Smith (2012)
-\newblock Title of the publication
-\newblock \emph{Journal Name} 12(3), 45 -- 678.
-\end{thebibliography}
-}
-\end{frame}
-
-%------------------------------------------------
-
-\begin{frame}
-\Huge{\centerline{The End}}
-\end{frame}
-
-%----------------------------------------------------------------------------------------
-
-\end{document} 
+\end{document}
