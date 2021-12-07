@@ -59,6 +59,7 @@
 	backend     = bibtex,
 	sortcites   = true,
 	style       = numeric,
+	sorting     = none,
 ]{biblatex}
 \addbibresource{reference.bib}
 
@@ -98,10 +99,11 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Proposed Solution}
-	\begin{itemize}
-		\item An end-to-end approach that directly map noisy sensory observations to collision-free trajectories in a receding-horizon \autocite{receding_horizon} fashion, with purely onboard sensing and computation.
-			
+\section{Problem Statement}
+\begin{frame}{Problem Statement}
+	To construct an end-to-end approach that directly map noisy sensory observations to collision-free trajectories in a receding-horizon \autocite{receding_horizon} fashion, with purely onboard sensing and computation. \\~\\
+	
+	\begin{itemize}			
 		\item This direct mapping drastically reduces processing latency and increases robustness to noisy and incomplete perception. 
 		
 		\item The sensorimotor mapping is performed by a convolutional network.
@@ -119,11 +121,11 @@
 \end{frame}
 
 
-\section{Model evolution}
+\section{Literature Review}
 
 \begin{frame}{Traditional Methodology}
 	\begin{itemize}
-		\item The division of the navigation task into subtask
+		\item The division of the navigation task into sub task
 		\begin{itemize}
 			\item Sensing
 			\item Mapping
@@ -138,8 +140,8 @@
 
 \begin{frame}{State of the art Model}
 	\begin{itemize}
-		\item Some works tackle only perception and build high-quality maps from imperfect measurements. 
-		\item Other works focus on planning without considering perception errors. 
+		\item Some works tackle only perception and build high-quality maps from imperfect measurements \autocite{fastPlanner}. 
+		\item Other works focus on planning without considering perception errors. \autocite{reactive_method}
 		\item Numerous systems that combine online mapping with traditional planning algorithms have been proposed to achieve autonomous flight in unknown environments.
 		\begin{itemize}
 			\item 3D euclidean signed distance fields
@@ -173,7 +175,7 @@
 		
 		\item Inputs
 		\begin{itemize}
-			\item Depth Image $d \in \mathbb{R}^{640*480}$ from Semi-Global Matching algorithm
+			\item Depth Image $d \in \mathbb{R}^{640*480}$ from Semi-Global Matching algorithm \autocite{stereoMatching}
 			\item Estimate of the platform velocity $v \in \mathbb{R}^3$
 			\item Attitude (rotation matrix) $q \in \mathbb{R}^9$
 			\item Desired flight direction $\omega \in \mathbb{R}^3$
@@ -196,24 +198,7 @@
 
 	\end{block}
 
-	\begin{equation}
-		\begin{aligned}
-			c(\tau, \tau_{ref},C) = & \int_0^1 \lambda_c C_{collision(\tau(t))} +  \\
-			& \int_0^1[\tau(t) - \tau_{ref}(t)]^\top Q[\tau(t) - \tau_{ref}(t)] \,dt\
-		\end{aligned}
-	\end{equation}
-
-	
-
-	\begin{equation}
-		C_{collision}(\tau(t)) = 
-		\begin{cases}
-			0 & \text{if $d_c > 2r_q$}\\
-			-d^2_c / r^2_q + 4 & \text{otherwise}
-		\end{cases} 
-	\end{equation}
-
-
+	\newpage
 
 	Way too complex! To approximate the density P, we use random sampling using M-H algorithm \autocite{MH_hasting}. \\~\\
 	
@@ -223,12 +208,12 @@ uniform knot vector.
 
 \end{frame}
 
-\begin{frame}{The student Policy}
+\begin{frame}{The Student Policy}
 	\begin{itemize}
 		\item It produces collision-free trajectories in real time with access only to on-board sensor measurements.
 		\item Make use of pre-trained MobileNetV3 architecture \autocite{MobileNet}
 		\item Perceptron network engage in combining features.
-		\begin{block}{Output}
+		\begin{block}{Trajectory}
 			\begin{flalign}
 				\mathbb{T}_n & = \{ (\tau_n^k, c_k) | \in [0, 1, ..., M-1 ]\} \\
 				\tau_n^k & = [p(t_i)]_{i=1}^{10}, t_i = \frac{i}{10}
@@ -301,8 +286,8 @@ uniform knot vector.
 	\begin{itemize}
 		\item Two representative state-of-the-art approaches as selected as baselines for navigation in unknown environments: 
 		\begin{itemize}
-			\item Mapping and planning method - FastPlanner
-			\item Reactive planner
+			\item Mapping and planning method - FastPlanner \autocite{fastPlanner}
+			\item Reactive planner \autocite{reactive_method}
 		\end{itemize}
 	
 		\item Experiments are stimulated in the \textit{Flightmare simulator} using the RotorS Gazebo plugin for physics modeling and Unity as a rendering engine.
