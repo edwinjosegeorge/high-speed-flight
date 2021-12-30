@@ -1,4 +1,4 @@
-Presentation-blx.bib
+*blx.bib
 *.aux
 *.bbl
 *.blg
@@ -10,3 +10,8 @@ Presentation-blx.bib
 *.snm
 *.synctex.gz
 *.toc
+*.lof
+*.lot
+
+!SupportMatter/vision.pdf
+
