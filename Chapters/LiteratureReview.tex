@@ -20,8 +20,16 @@ Because the number of samplesrequired to train general navigation policies is v
 
 More recent work has demonstrated that very agile controlpolicies can be trained in simulation. Such policies can successfully perform acrobatic maneuvers, but can onlyoperate in unobstructed free space and are essentially blind to obstaclesin the environment.
 
-\subsection{Reactive Planner}
 \subsection{FastPlanner}
+The mapping and planning method of Zhou et al. (FastPlanner)
+It incrementally builds a map from aseries of observations and plans a trajectory in this map to reach thegoal while avoiding obstacles. 
+
+
+\subsection{Reactive Planner}
+The reactive planner of Florence et al. (Reactive)
+It does not build a map but uses instantaneous depth information to select the best trajectory from a set of pre-defined motion primitives
+based on a cost that encodes collision and progress toward the goal.
+
 
 \section{Proposed Model}
 Here we present an approach to fly a quadrotor at high speeds ina variety of environments with complex obstacle geometry (Figure \ref{fig:navigation real envt}) while having access to only onboard sensing and computation. By predicting navigation commands directly from sensormeasurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such

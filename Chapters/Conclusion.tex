@@ -1,3 +1,21 @@
 \chapter{Conclusions and Future Scope}
-The main idea of this chapter is to give a brief conclusion of the work done or 
-presented and aim more on the plan of future extensions of the work. 
+
+\section{Conclusion}
+Existing autonomous flight systems are highly engineered and modular.The navigation task is usually split into sensing, mapping, planning,and control. The separation into multiple modules simplifies the implementation of engineered systems, enables parallel development of eachcomponent, and makes the overall system more interpretable. However,modularity comes at a high cost: the communication between modulesintroduces latency, errors compound across modules, and interactionsbetween modules are not modeled. In addition, it is an open question if certain subtasks, such as maintaining an explicit map of theenvironment, are even necessary for agile flight.
+
+This work replaces the traditional components of sensing, mapping,and planning with a single function that is represented by a neuralnetwork. This increases the system’s robustness against sensor noiseand reduces the processing latency. It is validated via experiments that this approachcan reach speeds of up to 10 $m/s$ in complex environments andreduces the failure rate at high speeds by up to 10 times when comparedwith the state of the art.Such a target is achieved by training a neural network to imitate an expertwith privileged information in simulation. 
+
+To cope with the complexityof the task and to enable seamless transfer from simulation to reality,several technical contributions are made. These include a sampling based expert, a neural network architecture, and a training procedure,
+all of which take the task’s multi-modality into account. The use of an abstract, but sufficiently rich input representation considers real world sensor noise. The combination of these innovations enables thetraining of robust navigation policies in simulation that can be directlytransferred to diverse real-world environments without any fine-tuningon real data.
+
+\section{Future Scope}
+Several opportunities can be seen for the future work. 
+\begin{enumerate}
+	\item Currently, the learnedpolicy exhibits low success rates at average speeds of $10 m/s$ orhigher in the real world. This is mainly because of the fact that,at speeds feasible solutions require temporalconsistency over a long time horizon and strong variations of the instantaneous flying speed as a function of the obstacle density. Thisrequirement makes feasible trajectories extremely sparse in parameterspace, resulting in intractable sampling. 
+	
+	Engineering a more complexexpert to tackle this problem can be very challenging and might requirespecifically tailored heuristics to find approximate solutions. 
+	
+	\item The second reason for the performance drop at veryhigh speeds is the mismatch between the simulated and physical dronein terms of dynamics and perception. The mismatch in dynamics isbecause of aerodynamics effects, motor delays, and dropping batteryvoltage.
+	
+	\item A third reason isperception latency: Faster sensors can provide more information aboutthe environment in a smaller amount of time and, therefore, can beused to provide more frequent updates. This could enable further reducing sensitivity to noiseand promote a quicker understanding of the environment. Perceptionlatency can possibly be reduced with event cameras
+\end{enumerate}
