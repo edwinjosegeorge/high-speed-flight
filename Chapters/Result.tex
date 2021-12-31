@@ -1,6 +1,18 @@
 \chapter{Experimental Results}
 % Experimental Setup
 %==============
-Here, you may give data and information regarding the experimental setup and the simulation results. All the chapter titles should match your paper.
-
-
+The resulting policy can fly a physical quadrotor in natural and
+human-made environments at speeds that are unreachable by existing
+methods. We achieve this in a zero-shot generalization setting: we train
+on randomly generated obstacle courses composed of simple off-the-
+shelf objects, such as schematic trees and a small set of convex shapes
+such as cylinders and cubes. We then directly deploy the policy in the
+physical world without any adaptation or fine-tuning. Our platform
+experiences conditions at test time that were never seen during training.
+Examples include high dynamic range (when flying from indoor envi-
+ronments to outdoor environments), poorly textured surfaces (indoor
+environments and snow-covered terrain), thick vegetation in forests,
+and the irregular and complex layout of a disaster scenario (Figure 2).
+These results suggest that our methodology enables a multitude of
+applications that rely on agile autonomous drones with purely onboard
+sensing and computation.

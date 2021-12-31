@@ -1,17 +1,22 @@
 \clearpage
 \chapter{Introduction}
-This document is a template for preparation of {\bf Seminar Report} in \LaTeX for the B.Tech
-{\em CSE} course in the Department Of Computer Science and Engineering,
-Government College Of Engineering,
-Kannur.
 
+Quadrotors are among the most agile and dynamic machines ever created. Thanks to their agility, they can traverse complex environments, ranging from cluttered forests to urban canyons, and reachlocations that are otherwise inaccessible to humans and machines alike. This ability has led to their increased application in fields such as search and
+rescue, logistics, security, infrastructure, entertainment, and agriculture. In the majority of these existing applications, the quadrotor needs to be controlled by expert human pilots, who take years to train,and are thus an expensive and scarce resource. Infusing quadrotorswith autonomy, that is the capability to safely operate in the world without the need for human intervention, has the potential to massivelyenhance their usefulness and to revolutionize whole industries. 
 
-A project Report/Seminar report is a documentation of a student's research
-work.
-It provides information on the student's work to the future students.
-Institute-wide
-standardization, readability, conformance to ethical norms, and durability are the four
-overriding criteria for an acceptable form of a report.
+However, the development of autonomous quadrotors that can navigate incomplex environments with the agility and safety of expert human pilots or birds is a long-standing challenge that is still open. The limiting factor for autonomous agile flight in arbitrary unknownenvironments is the coupling of fast and robust perception with effectiveplanning. The perception system has to be robust to disturbances suchas sensor noise, motion blur, and changing illumination conditions. Inaddition, an effective planner is necessary to find a path that is bothdynamically feasible and collision-free while relying only on noisy andpartial observations of the environment. These requirements, togetherwith the limited computational resources that are available onboard,make it difficult to achieve reliable perception and planning at lowlatency and high speeds.
 
+\section{Prior Works}
+State of the art have proposed various methods in mitigating the above said problem. The methods mainly involve separating the navigation problem into sub-tasks: sensing, mapping and planning. This approach have proven successful at low speeds. It is also attractive in the eyes of an Engineer, as it marks separate modules to focus on. However the sub task are executed sequentially, leading to increased processing latency and compounding of errors through the pipeline. These issue can be mitigated to some degree by careful hand-tuning and engineering. A lot of effort needs to be made to model such a system. Yet, the system finds it difficult to navigate the quadrotor with higher speeds in un-trained or environment that it have never seen before.
 
-The Chapter titles in this document are not part of the seminar report and were arbitrarily chosen.
+\section{Proposed Solution}
+To mitigate the above scenario, we propose a network that can learn the given environment and navigate in higher speeds. Using this information, the model can navigate in un-seen environment with similar speeds, accounting for the noise and latency of inputs in determining effective routes. To speed-up the learning, the model is trained in an stimulated environment and tested in real world environment without any tuning. The network that gains such a property maps noisy inputs directly to outputs with low latency, enabling fast navigation. To summarize, the following properties are desired and achieved in the proposed network model
+
+\begin{itemize}
+	\item The perception system has to be robust to disturbances suchas sensor noise, motion blur, and changing illuminationconditions.
+	\item An effective planner is necessary to find a path that is bothdynamically feasible and collision-free while relying only on noisy and partial observations of the environment.
+	\item The network should make use of the limited computational resources that are available onboard to achieve reliable perception andeffective planning at low latency and high speeds.
+	\item Other factors such as aerodynamics, torque, power, reactiondelays etc needs to be monitored during flight
+\end{itemize}
+
+Here we present an approach to fly a quadrotor at high speeds ina variety of environments with complex obstacle geometry (Figure \ref{fig:navigation real envt}) while having access to only onboard sensing and computation. The navigation policy is trained via privileged learning ondemonstrations that are provided by a sampling-based expert. The policy learns a distributionof collision-free trajectories. The neural network policy takes anoisy depth image and inertial measurements as sensory inputs andproduces a set of short-term trajectories together with an estimate ofindividual trajectory costs. 

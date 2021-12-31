@@ -1,92 +1,72 @@
 \chapter{Literature Review} 
-% Chapter 2 - This tex file refers to the content of your second chapter  
-%=======================================================================================
 
-A literature review is a summary of research that has been published about a particular subject. 
-It provides the reader with an idea about the current situation in terms of what has 
-been done, and what we know. Sometimes it includes suggestions about what needs to be done 
-to increase the knowledge and understanding of a particular problem.
-\\
-The articles used must be from professional journals, which means we can trust that the authors 
-are trained professionals, and others have examined their work. Some studies are more easily read 
-and summarized than others. Be sure you feel comfortable with your choices, since it is difficult 
-to summarize ideas you don't understand.
-\\
-Once you have found the articles, read them and take notes. Write the literature review from your notes.
-The Literature Review is the chapter of the FYP which refers to publications that are related to your 
-particular research. The Literature Review
-chapter provides a detailed review, discussion and comment on published work that contributes to your own study.
-\\
-When writing the Literature Review, frequent reference to the work of other 
-authors will be made. The two main methods to refer to the work of published sources are:
-\begin{itemize}
- \item to use a direct, verbatim (word-for-word) quotation, and
- \item to summarize or paraphrase an autho's work, using your own words.
-\end{itemize}
-
-\section{Numbering System}
-There is an alternative method for referring to sources which does not use the author's name. 
-This alternative method simply allocates a number to the source and the number then refers the
-reader to the bibliography at the end. This method is frequently used
-in science-based disciplines. If using this system, the reference number is allocated
-chronologically, starting with [1] and with the number placed within square brackets. Should a 
-reference be made later to a source previously referred to, the earlier number is used.
-Note that if the numbering system is used to refer to authors, the bibliography will list 
-the references numerically and not alphabetically.
-
-\section{Choice of Verb Tense when Referring to Authors}
-When reading academic texts, you may notice that several tenses are used to refer to the work 
-of other authors. The tenses often used are simple past, present perfect and simple present. 
-Such a range is perfectly acceptable and there are several reasons that influence the choice of tense.
-
-\subsection{Simple Past Tense}
-Simple Past Tense tends to be the most frequently used tense to refer to the findings of another 
-author's research. 
-
-\subsection{Present Perfect Tense}
-It is often used when the focus of the work is on several authors.
-\\
-e.g. 	
-Jolly [2] and Lawrence [3] have studied ...
-A number of authors have investigated the strength of … [3, 6, 9]
-\\
-Present Perfect Tense may also be used when you want to refer to how much or how little 
-research has been carried out on a particular topic.
-\\
-e.g. Very little research has been carried out into the effects of …
-\\
-Present Tense is often used to refer to generally accepted scientific facts.
-\\
-e.g. Experimental observations carried out in the past show that … (Smythe, 1995).
-
-\subsection{Model Verbs}
-Modal Verbs may be used if you wish to introduce a degree of tentativeness into your comments 
-about the work of an author. In this situation the reporting verb will be in the passive voice and
-the addition of a modal verb will indicate the degree of confidence attributed to the information.
-
-\section{Range of Verbs to Refer to an Author's Work}
-When referring to sources, your writing style will be more effective if you vary the 
-choice of verb to refer to the source. The following is a list of frequently used verbs. 
-When referring to an author, select a verb that is most appropriate to the context and 
-that conveys the author's meaning accurately.
-\begin{table}[!ht]
-\begin{tabular}{lllll}
-Argued & Concluded & Demonstrated & Discussed \\
-Examined & Explained & Found & Indicated \\
-Investigated & Noted & Pointed out & Presented\\
-Proposed & Provided & Reasoned & Recorded \\
-Reported & Showed & Stated & Suggested \\
-Surveyed & & &  
-\end{tabular}
-\end{table}
-
-\section{Example}
-In \cite{a1} classification and comparison 
-of dc-dc converters are described.
+Various approaches to enable autonomous flight have been proposed in the literature. Some works tackle only perception and build high-quality maps from imperfect measurements, whereas othersfocus on planning without considering perception errors. Numerous systems that combine online mapping with traditional planning algorithms have been proposed to achieve autonomous flight in previously unknown environments. A taxonomy of prior works ispresented in Figure \ref{fig:taxonomy}.
 
 
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.75\textwidth]{taxonomy_navigation.png}
+		\caption{Taxonomy of prior works}
+		\label{fig:taxonomy}
+	\end{center}
+\end{figure}
 
+\section{Traditional Models}
+Traditional methods mainly involve the division of the navigation task into sensing, mapping and planning sub-tasks. The sensors captures the environment details which are then appropriately mapped to calculate the current state of the quadrotor. This information is used to plan the route for the navigation and associated commands are issued to the rotor. Such as system is attractive from an engineering perspective, becauseit enables parallel progress on each component and makes the overall system interpretable. However, it leads to pipelines that largelyneglect interactions between the different stages and thus compounderrors. Their sequential nature also introduces additional latency,making high-speed and agile maneuvers impossible.These issues can be mitigated to some degree by careful hand-tuning and engineering via divide-and-conquer principle that has beenprevalent in research on autonomous flight. But such a model imposes fundamental limits on the speed and agilitythat a robotic system can achieve.
 
+\section{Recent Models}
+Some recent works proposeto learn end-to-end policies directly from data without explicit mappingand planning stages. These policies are trained by imitating ahuman , from experience that was collected in simulation,or directly in the real world.
+Because the number of samplesrequired to train general navigation policies is very high, existingapproaches impose constraints on the quadrotor’s motion model with reduced maneuverabilityand agility. 
 
+More recent work has demonstrated that very agile controlpolicies can be trained in simulation. Such policies can successfully perform acrobatic maneuvers, but can onlyoperate in unobstructed free space and are essentially blind to obstaclesin the environment.
 
+\subsection{Reactive Planner}
+\subsection{FastPlanner}
 
+\section{Proposed Model}
+Here we present an approach to fly a quadrotor at high speeds ina variety of environments with complex obstacle geometry (Figure \ref{fig:navigation real envt}) while having access to only onboard sensing and computation. By predicting navigation commands directly from sensormeasurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such
+as motion blur, missing data, and sensor noise. 
+
+The policyis exclusively trained in simulation. Stereo matching algorithm is utilized to provide depth images as inputto the policy, showing a strong similarity of the noise models between simulatedand real observations.
+
+The navigation policy is trained via privileged learning ondemonstrations that are provided by a sampling-based expert. The expertuses Metropolis-Hastings (M-H) sampling to compute a distributionof collision-free trajectories. This captures the multi-modal nature ofthe navigation task where many equally valid solutions can exist. The sampler is bias towardobstacle-free regions by conditioning it on trajectories from a classic
+global planning algorithm.
+
+The neural network policy takes anoisy depth image and inertial measurements as sensory inputs andproduces a set of short-term trajectories together with an estimate of
+individual trajectory costs. The policyadaptively maps thepredicted trajectories to the best trajectories that have been found by the sampling-based expert. 
+
+\begin{figure}
+	\centering
+	\begin{subfigure}[b]{\textwidth}
+		\centering
+		\includegraphics[keepaspectratio=true, width=\textwidth]{Navigation Environment/snow.png}
+		\caption{Snowy Environment}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[keepaspectratio=true, width=\textwidth]{Navigation Environment/forest.png}
+		\caption{Dense forest}
+	\end{subfigure}
+	\hfill	
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[keepaspectratio=true, width=\textwidth]{Navigation Environment/narrow gap.png}
+		\caption{Narrow gaps}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[keepaspectratio=true, width=\textwidth]{Navigation Environment/construction site.png}
+		\caption{Construction sites}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[keepaspectratio=true, width=\textwidth]{Navigation Environment/open space.png}
+		\caption{Derailed Train}
+	\end{subfigure}
+	
+	\caption{Time-lapse illustrations of agile navigation}
+	\label{fig:navigation real envt}
+\end{figure}
