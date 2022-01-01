@@ -103,11 +103,11 @@ In these environments, the drone faces a different set of challenges. It has to 
 Here the drones are required to exit a hangar by passing through a narrow gap of about 0.8 m in width. At the start of the experiment, the drones are placed at about 10 m in front of and about 5 m to the right of the gap. The task was represented by a straight reference trajectory passing through a wall. This experiment is challenging since it requires a high-level understanding of the environment to turn early enough toward the gap. 
 
 \subsection{Controlled experiments}
-A set of controlled experiments in simulation was conducted to compare the performance of the model with several baselines. Two representative state-of-the-art approaches were selected as baselines for navigation in unknown environments: (i) FastPlanner\cite{fastPlanner} (ii) Reactive\cite{reactive_method}
+A set of controlled experiments in simulation was conducted to compare the performance of the model with several baselines. Two representative state-of-the-art approaches were selected as baselines for navigation in unknown environments: (i) FastPlanner \cite{fastPlanner} (ii) Reactive \cite{reactive_method}
 
 The experiments was performed in the Flightmare simulator using the RotorS Gazebo plugin for accurate physics modeling and Unity as a rendering engine. The experiments are conducted in four different environments as shown in the figure \ref{fig:stimulated envt}. 
 
-The drone is provided with the following: the state of the platform, depth measurements from the stereo camera\cite{stereoMatching}, and a goal in the form of a reference state that lies 5 s in the future. 
+The drone is provided with the following: the state of the platform, depth measurements from the stereo camera \cite{stereoMatching}, and a goal in the form of a reference state that lies 5 s in the future. 
 
 \begin{figure}[!h]
 	\centering
@@ -173,8 +173,8 @@ The commercial drone, flying at a speed of about 2.7 $m/s$ consistently failed t
 At low speeds (3 $m/s$ ) all methods perform similarly. However, as the speed increases, the baselines’ performances quickly drop: already at 5 $m/s$ , no baseline is able to complete all runs without crashing. In contrast, the proposed method can reliably fly at high-speeds through all environments, achieving an average success rate of 70 percent at 10 $m/s$ as shown in the figure \ref{fig:stimulated-results}. The drop in performance of the two baselines can be justified as follows.
 
 \begin{itemize}
-	\item Although the reactive\cite{reactive_method} baseline has a low processing latency, yet it has a limited expressive power: the trajectory to be executed can only be selected from a relatively small set of primitives. In addition, being the reactive\cite{reactive_method} baseline only conditioned on the current observation, it is strongly affected by noise in the observation.
-	\item The FastPlanner\cite{fastPlanner} baseline can reject outliers in the depth map by leveraging multiple observations, which makes it more robust to sensing errors. However, this methods generally results in higher processing latency: Multiple observations are required to add obstacles in the map, and, therefore, to plan trajectories to avoid them. This problem is worsened by high-speed motion, which generally results in little overlap between consecutive observations.
+	\item Although the reactive \cite{reactive_method} baseline has a low processing latency, yet it has a limited expressive power: the trajectory to be executed can only be selected from a relatively small set of primitives. In addition, being the reactive \cite{reactive_method} baseline only conditioned on the current observation, it is strongly affected by noise in the observation.
+	\item The FastPlanner \cite{fastPlanner} baseline can reject outliers in the depth map by leveraging multiple observations, which makes it more robust to sensing errors. However, this methods generally results in higher processing latency: Multiple observations are required to add obstacles in the map, and, therefore, to plan trajectories to avoid them. This problem is worsened by high-speed motion, which generally results in little overlap between consecutive observations.
 \end{itemize}
 
 \begin{figure}[!h]
@@ -201,12 +201,12 @@ Table \ref{tab:processing-latency} shows the results of comparison of computatio
 			$\sigma$ (ms) &
 			Perc. (\%) &
 			\begin{tabular}[c]{@{}c@{}}Total Proc. \\ Latency (ms)\end{tabular} \\ \hline
-			\multirow{3}{*}{FastPlanner\cite{fastPlanner}} & Pre-processing & 14.6        & 2.3        & 22.3 & \multirow{3}{*}{65.2} \\
+			\multirow{3}{*}{FastPlanner \cite{fastPlanner}} & Pre-processing & 14.6        & 2.3        & 22.3 & \multirow{3}{*}{65.2} \\
 			& Mapping        & 49.2        & 8.7        & 75.5 &                       \\
 			& Planning       & 1.4         & 1.6        & 2.2  &                       \\ \hline
-			\multirow{2}{*}{Reactive\cite{reactive_method}}    & Pre-processing & 14.6        & 2.3        & 22.3 & \multirow{2}{*}{19.1} \\
+			\multirow{2}{*}{Reactive \cite{reactive_method}}    & Pre-processing & 14.6        & 2.3        & 22.3 & \multirow{2}{*}{19.1} \\
 			& Planning       & 5.3         & 0.9        & 27.7 &                       \\ \hline
-			\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Proposed \\ model\cite{high-speed-flight}\end{tabular}} &
+			\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Proposed \\ model \cite{high-speed-flight}\end{tabular}} &
 			Pre-processing &
 			0.7 &
 			0.04 &
@@ -214,7 +214,7 @@ Table \ref{tab:processing-latency} shows the results of comparison of computatio
 			\multirow{3}{*}{10.3 (2.6*)} \\
 			& NN inference   & 10.1 (2.4*) & 1.5 (0.8*) & 93.0 &                       \\
 			& Projection     & 0.08        & 0.01       & 3.1  &                       \\ \hline
-			\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Proposed\\ model\cite{high-speed-flight}\\ (Onboard)\end{tabular}} &
+			\multirow{3}{*}{\begin{tabular}[c]{@{}c@{}}Proposed\\ model \cite{high-speed-flight}\\ (Onboard)\end{tabular}} &
 			Pre-processing &
 			0.2 &
 			0.01 &
@@ -229,12 +229,12 @@ Table \ref{tab:processing-latency} shows the results of comparison of computatio
 \end{table}
 \renewcommand{\arraystretch}{1}
 
-With a total computation time of 65.2 ms per frame, FastPlanner\cite{fastPlanner} incurs the highest processing latency. The temporal filtering operations that are necessary to cope with sensing errors effectively make perception even slower. Two to three observations of an obstacle can be required to add it to the map, which increases the effective latency of the system. 
+With a total computation time of 65.2 ms per frame, FastPlanner \cite{fastPlanner} incurs the highest processing latency. The temporal filtering operations that are necessary to cope with sensing errors effectively make perception even slower. Two to three observations of an obstacle can be required to add it to the map, which increases the effective latency of the system. 
 
-By foregoing the mapping stage altogether, the Reactive\cite{reactive_method} baseline significantly reduces computation time with a total processing latency of 19.1 ms. However, the reduced processing latency comes at the cost of the trajectory complexity that can be represented. In addition, the reactive\cite{reactive_method} baseline is sensitive to sensing errors, which can drastically affect performance at high speeds.
+By foregoing the mapping stage altogether, the Reactive \cite{reactive_method} baseline significantly reduces computation time with a total processing latency of 19.1 ms. However, the reduced processing latency comes at the cost of the trajectory complexity that can be represented. In addition, the reactive\cite{reactive_method} baseline is sensitive to sensing errors, which can drastically affect performance at high speeds.
  
 
-The proposed approach has significantly lower processing latency than both baselines; when network inference is performed on the GPU, the model is 25.3 times faster than FastPlanner\cite{fastPlanner} and 7.4 times faster than the Reactive baseline. When GPU inference is disabled, the network’s latency increases by only 8 ms. Moving from the desktop computer to the onboard embedded computing device, the network’s forward pass requires 38.9 ms. Onboard, the total time to pass from the sensor
+The proposed approach has significantly lower processing latency than both baselines; when network inference is performed on the GPU, the model is 25.3 times faster than FastPlanner \cite{fastPlanner} and 7.4 times faster than the Reactive baseline. When GPU inference is disabled, the network’s latency increases by only 8 ms. Moving from the desktop computer to the onboard embedded computing device, the network’s forward pass requires 38.9 ms. Onboard, the total time to pass from the sensor
 reading to a plan is 41.6 ms, which corresponds to an update rate of about 24 Hz.
 
 
@@ -261,17 +261,17 @@ The maximum speed depends on the sensing range, i.e. how far can an obstacle be 
 
 The experiment is set up by placing a quadrotor with an initial forward velocity $v$ at a distance of $6 m$ from a pole with diameter $1.5 m$. The quadrotor is modeled as a sphere with radius $0.2 m$. The controlled experiment with varying forward speeds $v$ in the range of 3 to $13 m/s$ is then performed.
 
-Ten experiments for each speed with all approaches are conducted and their success rates are reported. The experiment is executed in two settings: (i) with ground-truth depth information, to isolate the effect of latency on performance, and (ii) with depth estimated by stereo matching\cite{stereoMatching} (see fig \ref{fig:sterio-vision}) to analyze the effect of sensing errors to performance. The results are summarized in the figure \ref{fig:noise-graph}.
+Ten experiments for each speed with all approaches are conducted and their success rates are reported. The experiment is executed in two settings: (i) with ground-truth depth information, to isolate the effect of latency on performance, and (ii) with depth estimated by stereo matching \cite{stereoMatching} (see fig \ref{fig:sterio-vision}) to analyze the effect of sensing errors to performance. The results are summarized in the figure \ref{fig:noise-graph}.
 
 \subsection{Ground-truth depth}
-All approaches can complete the task perfectly up to 5$m/s$ . However, even in these ideal conditions, the performance of the baselines drops for speeds beyond 5$m/s$ . This drop in performance for Reactive\cite{reactive_method} is because the finite library of motion primitives does not contain maneuvers that are aggressive enough to complete this task. Similarly, the performance degrades for FastPlanner\cite{fastPlanner} as a result of sub-optimal planning of actions. 
+All approaches can complete the task perfectly up to 5$m/s$ . However, even in these ideal conditions, the performance of the baselines drops for speeds beyond 5$m/s$ . This drop in performance for Reactive \cite{reactive_method} is because the finite library of motion primitives does not contain maneuvers that are aggressive enough to complete this task. Similarly, the performance degrades for FastPlanner \cite{fastPlanner} as a result of sub-optimal planning of actions. 
 
 The proposed network can successfully avoid the obstacle without a single failure up to 7 $m/s$. For higher speeds, performance gracefully degrades to 60 percent at 10 $m/s$. This decrease in performance can be attributed to the sensitivity to imperfect network predictions when flying at high speed, where a single wrong action can lead to a crash. 
 
 \subsection{Estimated depth}
 The same experiment is repeated to study the influence of imperfect sensory measurements on performance. In this experiment, all methods are provided with depth maps that have been computed from the stereo pairs.   
 
-The baselines experience a significant drop in performance compared with when provided with perfect sensory readings. FastPlanner\cite{fastPlanner} completely fails for speeds of 5 $m/s$ and beyond. This sharp drop in performance is because of the need for additional filtering of the noisy depth measurements.Similarly, the performance of the Reactive baseline drops by 30 percent at 7 $m/s$.
+The baselines experience a significant drop in performance compared with when provided with perfect sensory readings. FastPlanner \cite{fastPlanner} completely fails for speeds of 5 $m/s$ and beyond. This sharp drop in performance is because of the need for additional filtering of the noisy depth measurements.Similarly, the performance of the Reactive baseline drops by 30 percent at 7 $m/s$.
 
 The network is only marginally affected by the noisy depth readings, with only a 10 percent drop in performance at 10 $m/s$, but no change in performance at lower speeds. This is because the sensorimotor policy, trained on depth from stereo, learns to account for common issues in the data such as discretization
 artifacts and missing values. 
