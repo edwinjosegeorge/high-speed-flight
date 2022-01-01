@@ -42,16 +42,24 @@ in the environment.
 \subsection{FastPlanner }
 The FastPlanner \cite{fastPlanner} incrementally builds a map from a
 series of observations and plans a trajectory in this map to reach the
-goal while avoiding obstacles. It is a novel online motion planningmethod for quadrotor autonomous navigation. Here, it decouples theonline fast motion planning problem as a front-end kinodynamic path searching and a back-end nonlinear trajectory optimization. Kinodynamic path searching is adopted to find a safe,kinodynamic feasible and minimum-time initial path, which isfurther improved in smoothness and clearance by a gradient based optimization. By utilizing the convex hull property ofB-spline, it significantly improves the efficiency and convergentrate of the optimization compared to previous gradient-basedplanning methods. By representing the trajectory as anon-uniform B-spline, we can adjust the time allocation according to a given expected flight aggressiveness. 
+goal while avoiding obstacles. It is a novel online motion planning
+method for quadrotor autonomous navigation. Here, it decouples the
+online fast motion planning problem as a front-end kinodynamic
+ path searching and a back-end nonlinear trajectory optimization. Kinodynamic path searching is adopted to find a safe,
+kinodynamic feasible and minimum-time initial path, which is
+further improved in smoothness and clearance by a gradient based optimization. By utilizing the convex hull property of
+B-spline, it significantly improves the efficiency and convergent
+rate of the optimization compared to previous gradient-based
+planning methods. By representing the trajectory as a
+non-uniform B-spline, the time allocation according to a given expected flight aggressiveness can be adjusted. 
 
 \subsection{Reactive Planner}
 Reactive planner \cite{reactive_method} does not build a map but uses instantaneous depth information to select the best trajectory from a set of pre-defined motion primitives based on a cost that encodes collision and progress toward the goal. It makes use of integrated perception and control for robust high-speed quadrotor flight through unknown cluttered environments. Motivated by experiments in which the difficulty of accurate state estimation was a primary limitation on speed, this method forgoes maintaining a map in favor of using only instantaneous depth information in the local frame. This provides robustness in the presence of significant state estimate uncertainty. The probabilistic formulation provides a natural way to integrate reactive obstacle avoidance with arbitrary navigation objectives. It has a motion primitive library which is utilized to compare with a global path-generation and path following approach.
 
 
 \section{Proposed Model}
-Here we present an approach to fly a quadrotor at high speeds in
-a variety of environments with complex obstacle geometry (Figure \ref{fig:navigation real envt}) while having access to only onboard sensing and computation. By predicting navigation commands directly from sensor
-measurements, we decrease the latency between perception and action while simultaneously being robust to perception artifacts, such
+An approach to fly a quadrotor at high speeds in a variety of environments with complex obstacle geometry (Figure \ref{fig:navigation real envt}) while having access to only onboard sensing and computation is proposed. By predicting navigation commands directly from sensor
+measurements, latency between perception and action can be decreased while simultaneously being robust to perception artifacts, such
 as motion blur, missing data, and sensor noise. 
 
 The policy is exclusively trained in simulation. Stereo matching algorithm \cite{stereoMatching} is utilized to provide depth images as input
